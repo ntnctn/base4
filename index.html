@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интернет-магазин</title>
+    <style>
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+        }
+        .filter-button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Каталог товаров. Админка - http://localhost:8080/admin</h1>
+    <div>
+        <button class="filter-button" onclick="filterProducts('Категория 1')">Категория 1</button>
+        <button class="filter-button" onclick="filterProducts('Категория 2')">Категория 2</button>
+        <button class="filter-button" onclick="filterProducts('')">Сбросить фильтр</button>
+    </div>
+    <div id="products"></div>
+
+    <script>
+        let allProducts = [];
+
+        function loadProducts() {
+            fetch('http://localhost:3000/api/products')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Сеть ответила с ошибкой: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allProducts = data;
+                    displayProducts(allProducts);
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+        function displayProducts(products) {
+            const productsDiv = document.getElementById('products');
+            productsDiv.innerHTML = ''; // Очистить текущий список товаров
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product';
+                productDiv.innerHTML = `
+                    <h2>${product.name}</h2>
+                    <p>Цена: ${product.price} руб.</p>
+                    <p>${product.description}</p>
+                `;
+                productsDiv.appendChild(productDiv);
+            });
+        }
+
+        function filterProducts(category) {
+            const filteredProducts = category ? 
+                allProducts.filter(product => Array.isArray(product.category) && product.category.includes(category)) : 
+                allProducts;
+            displayProducts(filteredProducts);
+        }
+
+        // Загружаем товары при загрузке страницы
+        loadProducts();
+    </script>
+</body>
+</html>

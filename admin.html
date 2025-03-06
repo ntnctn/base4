@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админская панель</title>
+    <style>
+        .product-form {
+            margin-bottom: 20px;
+            
+        }
+    </style>
+</head>
+<body>
+    <h1>Админская панель</h1>
+    
+    <h2>Добавить товар</h2>
+    <div class="product-form">
+        <input type="text" id="add-name" placeholder="Название товара" />
+        <input type="number" id="add-price" placeholder="Цена" />
+        <input type="text" id="add-description" placeholder="Описание" />
+        <input type="text" id="add-category" placeholder="Категория (через запятую)" />
+        <button onclick="addProduct()">Добавить товар</button>
+    </div>
+
+    <h2>Редактировать товар</h2>
+    <div class="product-form">
+        <input type="number" id="edit-id" placeholder="ID товара" />
+        <input type="text" id="edit-name" placeholder="Новое название товара" />
+        <input type="number" id="edit-price" placeholder="Новая цена" />
+        <input type="text" id="edit-description" placeholder="Новое описание" />
+        <input type="text" id="edit-category" placeholder="Новые категории (через запятую)" />
+        <button onclick="editProduct()">Редактировать товар</button>
+    </div>
+
+    <h2>Удалить товар</h2>
+    <div class="product-form">
+        <input type="number" id="delete-id" placeholder="ID товара" />
+        <button onclick="deleteProduct()">Удалить товар</button>
+    </div>
+
+    <script>
+        function addProduct() {
+            const name = document.getElementById('add-name').value;
+            const price = document.getElementById('add-price').value;
+            const description = document.getElementById('add-description').value;
+            const category = document.getElementById('add-category').value.split(',').map(cat => cat.trim());
+
+            const newProduct = { name, price: parseFloat(price), description, category };
+
+            fetch('http://localhost:8080/api/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newProduct)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка добавления товара: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Товар добавлен: ' + JSON.stringify(data));
+                document.getElementById('add-name').value = '';
+                document.getElementById('add-price').value = '';
+                document.getElementById('add-description').value = '';
+                document.getElementById('add-category').value = '';
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+
+        function editProduct() {
+            const id = document.getElementById('edit-id').value;
+            if (!id) {
+                alert('Пожалуйста, введите ID товара для редактирования.');
+                return;
+            }
+
+            const name = document.getElementById('edit-name').value;
+            const price = document.getElementById('edit-price').value;
+            const description = document.getElementById('edit-description').value;
+            const category = document.getElementById('edit-category').value.split(',').map(cat => cat.trim());
+
+            const updatedProduct = {};
+            if (name) updatedProduct.name = name;
+            if (price) updatedProduct.price = parseFloat(price);
+            if (description) updatedProduct.description = description;
+            if (category.length > 0) updatedProduct.category = category;
+
+            console.log('Редактируем товар с ID:', id); // Отладочное сообщение
+
+            fetch(`http://localhost:8080/api/products/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedProduct)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка редактирования товара: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Товар отредактирован: ' + JSON.stringify(data));
+                document.getElementById('edit-id').value = '';
+                document.getElementById('edit-name').value = '';
+                document.getElementById('edit-price').value = '';
+                document.getElementById('edit-description').value = '';
+                document.getElementById('edit-category').value = '';
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+
+        function deleteProduct() {
+            const id = document.getElementById('delete-id').value;
+
+            fetch(`http://localhost:8080/api/products/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    alert('Товар удален');
+                } else {
+                    throw new Error('Ошибка удаления товара: ' + response.status);
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+    </script>
+</body>
+</html>

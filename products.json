@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "name": "2",
+    "price": 2,
+    "description": "2",
+    "category": [
+      "2"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Товар 5",
+    "price": 250,
+    "description": "Описание товара 5",
+    "category": [
+      "Категория 1",
+      "Категория 2"
+    ]
+  },
+  {
+    "name": "1",
+    "price": 1,
+    "description": "1",
+    "category": [
+      "1"
+    ],
+    "id": 6
+  },
+  {
+    "name": "1",
+    "price": 1,
+    "description": "1",
+    "category": [
+      "1"
+    ],
+    "id": 7
+  },
+  {
+    "name": "1",
+    "price": 1,
+    "description": "1",
+    "category": [
+      "1"
+    ],
+    "id": 8
+  },
+  {
+    "name": "1",
+    "price": 1,
+    "description": "1",
+    "category": [
+      "4"
+    ],
+    "id": 9
+  },
+  {
+    "name": "4",
+    "price": 4,
+    "description": "4",
+    "category": [
+      "4"
+    ],
+    "id": 10
+  }
+]
