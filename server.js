@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
-const { WebSocketServer } = require('ws'); // Import WebSocketServer
-const { createServer } = require('http'); // Import createServer
+const { WebSocketServer } = require('ws'); 
+const { createServer } = require('http'); 
 
 const app = express();
 const PORT = 3000;
@@ -14,14 +14,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// Чтение данных о продуктах (вынесем в отдельную функцию)
+// Чтение данных о продуктах 
 function readProductsData() {
     try {
         const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf8');
         return JSON.parse(data);
     } catch (err) {
         console.error('Ошибка чтения файла products.json:', err);
-        return []; // Вернем пустой массив в случае ошибки
+        return []; // Пустой массив в случае ошибки
     }
 }
 
@@ -64,7 +64,7 @@ const root = {
 app.use('/graphql', graphqlHTTP({
     schema: schema,
     rootValue: root,
-    graphiql: true, // Включает GraphiQL для тестирования запросов
+    graphiql: true, 
 }));
 
 // Обработчик корневого пути для пользовательского интерфейса
@@ -78,27 +78,27 @@ const server = createServer(app);
 // Создаем WebSocket сервер
 const wss = new WebSocketServer({ server });
 
-// Store connected clients (both users and admin)
+// 
 const clients = new Set();
 
 wss.on('connection', ws => {
     console.log('Client connected');
-    clients.add(ws); // Add new client to the set
+    clients.add(ws); 
 
     ws.on('message', message => {
         console.log(`Received message: ${message}`);
 
-        // Broadcast the message to all connected clients
+        
         clients.forEach(client => {
-            if (client !== ws && client.readyState === 1) { // Check if client is not the sender and is connected
-                client.send(message.toString()); // Convert message to string
+            if (client !== ws && client.readyState === 1) { 
+                client.send(message.toString());
             }
         });
     });
 
     ws.on('close', () => {
         console.log('Client disconnected');
-        clients.delete(ws); // Remove client from the set on disconnection
+        clients.delete(ws); 
     });
 
     ws.on('error', error => {
